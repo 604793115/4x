@@ -102,9 +102,81 @@ void bpri(int n, int max, int op, char* oper,int bark, int fl)
     }
 }
 
+void fpri(int n, int max, int op, char* oper, int bark, int fl, FILE* fp)
+{
+    int i, j, a, b = 0, l;
+    l = strlen(oper);
+    for (i = 0; i < n; i++)
+    {
+        if (fl == 1)
+        {
+            for (j = 0; j < op; j++)
+            {
+                a = rand() % l;
+                if (bark == 1)
+                    b = rand() % 2;
+                if (b == 1)
+                {
+                    fprintf(fp,"(%d%c%d)", intrand(max), oper[a], intrand(max));
+                    j++;
+                    if (j == op)
+                    {
+                        fprintf(fp, "=\n");
+                        b = 2;
+                    }
+                    else
+                    {
+                        a = rand() % l;
+                        fprintf(fp, "%c", oper[a]);
+                    }
+                }
+                else
+                {
+                    fprintf(fp, "%d%c", intrand(max), oper[a]);
+                }
+
+            }
+            if (b != 2)
+                fprintf(fp, "%d=\n", intrand(max));
+        }
+        else
+        {
+            for (j = 0; j < op; j++)
+            {
+                a = rand() % l;
+                if (bark == 1)
+                    b = rand() % 2;
+                if (b == 1)
+                {
+                    fprintf(fp, "(%.2f%c%.2f)", floatrand(max), oper[a], floatrand(max));
+                    j++;
+                    if (j == op)
+                    {
+                        fprintf(fp, "=\n");
+                        b = 2;
+                    }
+                    else
+                    {
+                        a = rand() % l;
+                        fprintf(fp, "%c", oper[a]);
+                    }
+                }
+                else
+                {
+                    fprintf(fp, "%.2f%c", floatrand(max), oper[a]);
+                }
+
+            }
+            if (b != 2)
+                fprintf(fp, "%.2f=\n", floatrand(max));
+        }
+
+    }
+}
+
 int main()
 {
-    int n,max=0,op,bark=0,fl;
+    int n,max=0,op,bark=0,fl,fil;
     char oper[10];
     printf("请输入生成式子的数量\n");
     scanf_s("%d", &n);
@@ -146,7 +218,25 @@ int main()
             break;
         printf("输入有误，请重新输入\n");
     }
-    bpri(n, max, op, oper, bark, fl);
+    while (1)
+    {
+        printf("是否要输出到文件内（1=是，0=否）\n");
+        scanf_s("%d", &fil);
+        if (fil == 1 || fil == 0)
+            break;
+        printf("输入有误，请重新输入\n");
+    }
+    if (fil == 1)
+    {
+        FILE* fp;
+        errno_t err;
+        err = fopen_s(&fp,"E:\\Study\\1.txt", "w");
+        fpri(n, max, op, oper, bark, fl, fp);
+        fclose(fp);
+        printf("输出成功，请打开文件查看结果");
+    }
+    else 
+        bpri(n, max, op, oper, bark, fl);
     system("pause");
     return 0;
 }
